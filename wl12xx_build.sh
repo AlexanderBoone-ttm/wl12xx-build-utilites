@@ -1,19 +1,19 @@
 #!/bin/bash
 
 declare -A gen_tag="ol_R5.SP8.01"
-#### R5 SP3.05
-declare -A wl12xx_download_target="git@git.ti.com:wl12xx/wl12xx.git"
+#### R5 SP8.01
+declare -A wl12xx_download_target="git://git.ti.com/wl12xx/wl12xx.git"
 declare -A wl12xx_tag=${gen_tag}
-declare -A compatwireless_download_target="git@git.ti.com:wl12xx/compat-wireless.git"
+declare -A compatwireless_download_target="git://git.ti.com/wl12xx/compat-wireless.git"
 declare -A compat_wireless_tag=${gen_tag}
-declare -A compat_download_target="git@git.ti.com:wl12xx/compat.git"
+declare -A compat_download_target="git://git.ti.com/wl12xx/compat.git"
 declare -A compat_tag=${gen_tag}
 declare -A iw_download_target="git://git.sipsolutions.net/iw.git"
 declare -A iw_tag="0a236ef5f8e4ba7218aac7d0cdacf45673d5b35c"
 
-declare -A ti_utils_download_target="git@git.ti.com:wl12xx/ti-utils.git"
+declare -A ti_utils_download_target="git://git.ti.com/wl12xx/ti-utils.git"
 declare -A ti_utils_commit_id=${gen_tag}
-declare -A hostap_download_target="git@git.ti.com:wl12xx/hostap.git"
+declare -A hostap_download_target="git://git.ti.com/wl12xx/hostap.git"
 declare -A hostap_commit_id=${gen_tag}
 
 
@@ -112,7 +112,7 @@ function crda ()
 	stage=$1
 	if [ x"$stage" = "xdownload"  -o x"$stage" = "xall" ]
 	then
-		download "http://wireless.kernel.org/download/crda/crda-1.1.1.tar.bz2" "crda-1.1.1.tar.bz2"
+		download "http://linuxwireless.org/download/crda/crda-1.1.1.tar.bz2" "crda-1.1.1.tar.bz2"
                 download "http://linuxwireless.org/download/wireless-regdb/regulatory.bins/2011.04.28-regulatory.bin" "2011.04.28-regulatory.bin"
 		tar xjf crda-1.1.1.tar.bz2
 		cd ${WORK_SPACE}/crda-1.1.1
@@ -209,10 +209,8 @@ function openssl ()
 		cd ${WORK_SPACE}
 		download "http://www.openssl.org/source/openssl-1.0.0d.tar.gz" "openssl-1.0.0d.tar.gz"
 		tar xzf openssl-1.0.0d.tar.gz
-		download http://processors.wiki.ti.com/images/e/ee/Openssl-1.0.0d-new-compilation-target-for-configure.zip Openssl-1.0.0d-new-compilation-target-for-configure.zip
 		cd ${WORK_SPACE}/openssl-1.0.0d
-		unzip ${WORK_SPACE}/Openssl-1.0.0d-new-compilation-target-for-configure.zip || exit 1
-		patch -p1 -i 0001-openssl-1.0.0d-new-target-os-for-configure.patch || exit 1
+		patch -p1 -i ${old_dir}/patches/0001-openssl-1.0.0d-new-target-os-for-configure.patch
 		CROSS_COMPILE= perl ./Configure  shared --prefix=$ROOTFS/usr --openssldir=$ROOTFS/usr/lib/ssl linux-elf-arm
 	fi || exit 1
 	if [ x"$stage" = "xbuild" -o x"$stage" = "xall" ]
